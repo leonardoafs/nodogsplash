@@ -1,22 +1,34 @@
-## 0. The Nodogsplash project
+## 0. Documentação Hotspot Wifi + Captive Portal
 
-Nodogsplash is a Captive Portal that offers a simple way to provide restricted access to the Internet by showing a splash page to the user before Internet access is granted.
+Este README visa auxiliar na instalação de um Hotspot Wi-Fi com um captive portal configurável.
+Primeiramente vamos configurar um hotspot wifi. Depois, vamos instalar o captive portal.
+Github original: https://github.com/nodogsplash/nodogsplash
 
-It also incorporates an API that allows the creation of sophisticated authentication applications.
+### Pré-Requisitos
+ * **Raspberry Pi 3B ou 3B+**.
+ * **Conexão com a internet via cabo Ethernet**.
+ * **Teclado e Mouse, ou acesso à mesma rede para acesso via SSH**.
 
-It was derived originally from the codebase of the Wifi Guard Dog project.
 
-Nodogsplash is released under the GNU General Public License.
+## 1. Configurando um Hotspot Wifi
 
-* Mailing List: http://ml.ninux.org/mailman/listinfo/nodogsplash
-* Original Homepage (no longer available): http://kokoro.ucsd.edu/nodogsplash
-* Wifidog: http://dev.wifidog.org/
-* GNU GPL: http://www.gnu.org/copyleft/gpl.html
+Primeiramente, vamos atualizar os repositórios do sistema:
 
-The following describes what Nodogsplash does, how to get it and run it, and
-how to customize its behaviour for your application.
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
 
-## 1. Overview
+Com isso, vamos instalar dois pacotes essenciais, 'hostapd' e 'dnsmasq':
+
+'sudo apt-get install hostapd dnsmasq'
+
+Após, vamos pausar esses serviços:
+
+```
+sudo systemctl stop hostapd
+sudo systemctl stop dnsmasq
+```
 
 **Nodogsplash** (NDS) is a high performance, small footprint Captive Portal, offering by default a simple splash page restricted Internet connection, yet incorporates an API that allows the creation of sophisticated authentication applications.
 
