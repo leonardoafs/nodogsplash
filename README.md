@@ -13,25 +13,25 @@ Github original: https://github.com/nodogsplash/nodogsplash
 
 ## 1. Configurando um Hotspot Wifi
 
-Primeiramente, vamos atualizar os repositórios do sistema:
+1) Primeiramente, vamos atualizar os repositórios do sistema:
 
 ```
 sudo apt-get update
 sudo apt-get upgrade
 ```
 
-Com isso, vamos instalar dois pacotes essenciais, `hostapd` e `dnsmasq`, bem como o editor `vim`:
+2) Com isso, vamos instalar dois pacotes essenciais, `hostapd` e `dnsmasq`, bem como o editor `vim`:
 
 `sudo apt-get install hostapd dnsmasq vim`
 
-Após, vamos pausar esses serviços:
+3) Após, vamos pausar esses serviços:
 
 ```
 sudo systemctl stop hostapd
 sudo systemctl stop dnsmasq
 ```
 
-Agora, vamos configurar o arquivo dhcpd.conf:
+4) Agora, vamos configurar o arquivo dhcpd.conf:
 
 `sudo vim /etc/dhcpcd.conf`
 
@@ -44,13 +44,14 @@ interface wlan0
 ```
 
 Com isso, fechamos o arquivo.
-Agora, vamos reiniciar o serviço `dhcpcd` para validar as mudanças.
+
+5) Agora, vamos reiniciar o serviço `dhcpcd` para validar as mudanças.
 
 ``` 
 sudo systemctl restart dhcpcd
 ```
 
-Vamos abrir o arquivo `hostapd.conf`
+6) Vamos abrir o arquivo `hostapd.conf`
 
 ``` 
 sudo vim /etc/hostapd/hostapd.conf
@@ -65,7 +66,8 @@ wpa_passphrase=<SENHA DA REDE WI-FI>
 ```
 
 Aperte `:x` para salvar e sair.
-Vamos configurar o caminho de nosso hostapd.
+
+7) Vamos configurar o caminho de nosso hostapd.
 
 ```
 sudo vim /etc/default/hostapd
@@ -75,14 +77,14 @@ Nesse arquivo, devemos trocar `#DAEMON_CONF="" ` por `DAEMON_CONF="/etc/hostapd/
 Agora salvamos usando `:x`.
 
 
-Devemos fazer parecido em outro arquivo:
+8) Devemos fazer parecido em outro arquivo:
 ```
 sudo vim /etc/init.d/hostapd
 ```
 Agora, devemos trocar `DAEMON_CONF= ` por `DAEMON_CONF=/etc/hostapd/hostapd.conf`.
 Salvamos usando `:x`.
 
-Com isso, configurando o `dnsmasq`, modificaremos o arquivo de configuração.
+9) Com isso, configurando o `dnsmasq`, modificaremos o arquivo de configuração.
 Primeiramente, moveremos o arquivo original para um backup, para que possamos criar um novo.
 ```
 sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
@@ -99,19 +101,19 @@ server=1.1.1.1       # Use Cloudflare DNS
 dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time
 ```
 
-Agora, vamos configurar para que o tráfego seja redirecionado para quem for se conectar:
+10) Agora, vamos configurar para que o tráfego seja redirecionado para quem for se conectar:
 ```
 sudo vim /etc/sysctl.conf
 ```
 Onde temos `#net.ipv4.ip_forward=1`, devemos mudar para `net.ipv4.ip_forward=1`.
 
-Para ter as configurações rodando a partir de agora, devemos digitar `sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"`
+11) Para ter as configurações rodando a partir de agora, devemos digitar `sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"`
 
-Agora, para carregar as novas regras de iptables, digitamos `sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE`
+12) Agora, para carregar as novas regras de iptables, digitamos `sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE`
 
-Para que as regras sejam carregadas em todo novo boot do sistema, digitamos `sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"`
+13) Para que as regras sejam carregadas em todo novo boot do sistema, digitamos `sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"`
 
-Agora, abriremos o arquivo `rc.local`:
+14) Agora, abriremos o arquivo `rc.local`:
 `sudo vim /etc/rc.local`
 No final dele, colocaremos uma nova linha, logo acima de `exit 0`:
 ```
@@ -120,7 +122,7 @@ iptables-restore < /etc/iptables.ipv4.nat
 
 Agora salvamos com `:x`.
 
-Reiniciando os serviços que tinhamos pausado antes:
+15) Reiniciando os serviços que tinhamos pausado antes:
 ```
 sudo systemctl unmask hostapd
 sudo systemctl enable hostapd
@@ -128,7 +130,7 @@ sudo systemctl start hostapd
 sudo service dnsmasq start
 ```
 
-Agora, reiniciaremos com `sudo reboot`.
+16) Agora, reiniciaremos com `sudo reboot`.
 Com isso, temos um Ponto de Acesso configurado, porém ainda sem o Captive Portal, o que nos leva para a segunda parte.
 
 ## 2. Instalando o Captive Portal
