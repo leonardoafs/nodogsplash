@@ -65,6 +65,73 @@ wpa_passphrase=<SENHA DA REDE WI-FI>
 ```
 
 Aperte `:x` para salvar e sair.
+Vamos configurar o caminho de nosso hostapd.
+
+```
+sudo vim /etc/default/hostapd
+```
+
+Nesse arquivo, devemos trocar `#DAEMON_CONF="" ` por `DAEMON_CONF="/etc/hostapd/hostapd.conf"`.
+Agora salvamos usando `:x`.
+
+
+Devemos fazer parecido em outro arquivo:
+```
+sudo vim /etc/init.d/hostapd
+```
+Agora, devemos trocar `DAEMON_CONF= ` por `DAEMON_CONF=/etc/hostapd/hostapd.conf`.
+Salvamos usando `:x`.
+
+Com isso, configurando o `dnsmasq`, modificaremos o arquivo de configuração.
+Primeiramente, moveremos o arquivo original para um backup, para que possamos criar um novo.
+```
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+```
+
+Agora, podemos criar nosso arquivo de configuração:
+```
+sudo vim /etc/dnsmasq.conf
+```
+Adicionaremos o texto abaixo:
+```
+interface=wlan0       # Use interface wlan0  
+server=1.1.1.1       # Use Cloudflare DNS  
+dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time
+```
+
+Agora, vamos configurar para que o tráfego seja redirecionado para quem for se conectar:
+```
+sudo vim /etc/sysctl.conf
+```
+Onde temos `#net.ipv4.ip_forward=1`, devemos mudar para `net.ipv4.ip_forward=1`.
+
+Para ter as configurações rodando a partir de agora, devemos digitar `sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"`
+
+Agora, para carregar as novas regras de iptables, digitamos `sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE`
+
+Para que as regras sejam carregadas em todo novo boot do sistema, digitamos `sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"`
+
+Agora, abriremos o arquivo `rc.local`:
+`sudo vim /etc/rc.local`
+No final dele, colocaremos uma nova linha, logo acima de `exit 0`:
+```
+iptables-restore < /etc/iptables.ipv4.nat
+```
+
+Agora salvamos com `:x`.
+
+Reiniciando os serviços que tinhamos pausado antes:
+```
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
+sudo systemctl start hostapd
+sudo service dnsmasq start
+```
+
+Agora, reiniciaremos com `sudo reboot`.
+Com isso, temos um Ponto de Acesso configurado, porém ainda sem o Captive Portal, o que nos leva para a segunda parte.
+
+## 2. Instalando o Captive Portal
 
 
 **Nodogsplash** (NDS) is a high performance, small footprint Captive Portal, offering by default a simple splash page restricted Internet connection, yet incorporates an API that allows the creation of sophisticated authentication applications.
