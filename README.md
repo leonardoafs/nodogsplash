@@ -135,37 +135,49 @@ Com isso, temos um Ponto de Acesso configurado, porém ainda sem o Captive Porta
 
 ## 2. Instalando o Captive Portal
 
+17) Primeiramente, instalaremos o `git` e o `libmicrohttpd-dev`:
+```
+sudo apt install git libmicrohttpd-dev
+```
 
-**Nodogsplash** (NDS) is a high performance, small footprint Captive Portal, offering by default a simple splash page restricted Internet connection, yet incorporates an API that allows the creation of sophisticated authentication applications.
+18) Agora, clonaremos esse repositório:
+```
+cd
+git clone https://github.com/leonardoafs/nodogsplash.git
+```
 
-**Captive Portal Detection (CPD)**
+19) Agora, compilaremos e instalaremos a ferramenta:
+```
+cd /nodogsplash
+sudo make
+sudo make install
+```
 
- All modern mobile devices, most desktop operating systems and most browsers now have a CPD process that automatically issues a port 80 request on connection to a network. NDS detects this and serves a special "**splash**" web page to the connecting client device.
+20) Agora, poderemos alterar algumas coisas no arquivo de configuração. Devemos abrir:
+```
+sudo vim /etc/nodogsplash/nodogsplash.conf
+```
 
-**Provide simple and immediate public Internet access**
+21) Agora, devemos achar essas linhas abaixo e fazer as alterações para que elas fiquem exatamente como abaixo:
+```
+GatewayInterface wlan0
+GatewayAddress 192.168.220.1
+MaxClients 250
+AuthIdleTimeout 480
+use_outdated_mhd 1
+login_option_enabled 1
+```
+Salvamos e fechamos usando `:x`.
 
- NDS provides two pre-installed methods.
+22) Com isso, podemos iniciar o programa:
+```
+sudo nodogsplash
+```
+Neste momento, podemos testar o funcionamento do Captive Portal. Aos nos conectarmos à rede utilizando a senha configurada, o dispositivo que você estiver usando deve abrir um Captive Portal, requisitando nome e email, que serão guardados em um arquivo de log, para liberar acesso à internet. Ao fazer isso, devemos receber uma mensagem de "Success".
 
- * **Click to Continue**. A simple static web page with template variables (*default*). This provides basic notification and a simple click/tap to continue button.
- * **Username/email-address login**. A simple dynamic set of web pages that provide username/email-address login, a welcome page and logs access by client users. (*Installed by default and enabled by un-commenting a line in the configuration file*)
-
-Customising the page seen by users is a simple matter of editing the respective html or script files.
-
-**Write Your Own Captive Portal.**
-
- NDS can be used as the "Engine" behind the most sophisticated Captive Portal systems using the tools provided.
-
- * **Forward Authentication Service (FAS)**. FAS provides pre-authentication user validation in the form of a set of dynamic web pages, typically served by a web service independent of NDS, located remotely on the Internet, on the local area network or on the NDS router.
- * **PreAuth**. A special case of FAS that runs locally on the NDS router with dynamic html served by NDS itself. This requires none of the overheads of a full FAS implementation and is ideal for NDS routers with limited RAM and Flash memory.
- * **BinAuth**. A method of running a post authentication script or extension program.
-
-
-## 2. Documentation
-
-For full documentation please look at https://nodogsplashdocs.rtfd.io/
-
-You can select either *Stable* or *Latest* documentation.
-
----
-
-Email contact: nodogsplash (at) ml.ninux.org
+23) Agora, abriremos o arquivo `rc.local`:
+`sudo vim /etc/rc.local`
+No final dele, colocaremos uma nova linha, logo acima de `exit 0`:
+```
+nodogsplash
+```
