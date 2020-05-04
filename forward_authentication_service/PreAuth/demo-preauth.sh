@@ -28,14 +28,14 @@
 #
 
 #For Openwrt:
-mountpoint="/tmp"
-logdir="/tmp/ndslog/"
-logname="ndslog.log"
+#mountpoint="/tmp"
+#logdir="/tmp/ndslog/"
+#logname="ndslog.log"
 
 #For Raspbian:
-#mountpoint="/run"
-#logdir="/run/ndslog/"
-#logname="ndslog.log"
+mountpoint="/run"
+logdir="/run/ndslog/"
+logname="ndslog.log"
 
 
 # functions:
