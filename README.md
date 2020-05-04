@@ -184,5 +184,5 @@ nodogsplash
 
 ## 3. Modificando o Captive Portal
 
-A partir do momento que está instalado, o Captive Portal pode ser configurado ao modificar o arquivo ´/usr/lib/nodogsplash/login.sh´.
-Porém, devemos manter as variáveis ´$token´ e ´$mac´.
+A partir do momento que está instalado, o Captive Portal pode ser configurado ao modificar o arquivo `/usr/lib/nodogsplash/login.sh`.
+Porém, devemos manter as variáveis `$token` e `$mac`.
