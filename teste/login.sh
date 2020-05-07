@@ -244,7 +244,7 @@ header="<!DOCTYPE html>
       color: #eee;
       }
       body {
-      background: url(\"/uploads/media/default/0001/01/b5edc1bad4dc8c20291c8394527cb2c5b43ee13c.jpeg\") no-repeat center;
+      background: url(\"/ufrj.jpg\") no-repeat center;
 
       background-size: cover;
       }
