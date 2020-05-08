@@ -186,3 +186,4 @@ nodogsplash
 
 A partir do momento que está instalado, o Captive Portal pode ser configurado ao modificar o arquivo `/usr/lib/nodogsplash/login.sh`. Ou, caso deseje modificar antes de instalar, pode modificar o arquivo `nodogsplash/forward_authentication_service/PreAuth/demo-preauth.sh` desse git.
 Porém, devemos manter as variáveis `$token` e `$mac`, só alterado o código HTML/CSS.
+Para adicionar imagens ao nosso captive portal, você deve inseri-las em `/etc/nodogsplash/htdocs/images/` e, ao chama-la no shell script, você deve se referir como `src=/images/FOTO.jpg`
