@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Copyright (C) The Nodogsplash Contributors 2004-2020
 #Copyright (C) BlueWave Projects and Services 2015-2020
 #This software is released under the GNU GPL license.
@@ -98,7 +98,7 @@ write_log () {
 	sizeratio=$(($available/$filesize))
 
 	if [ $sizeratio -ge $min_freespace_to_log_ratio ]; then
-		userinfo="username=$username, emailAddress=$emailaddr"
+		userinfo="username=$username, emailAddress=$emailaddr, dre=$dre"
 		clientinfo="macaddress=$clientmac, clientzone=$client_zone, useragent=$user_agent"
 		echo "$datetime, $userinfo, $clientinfo" >> $logfile
 	else
@@ -175,9 +175,9 @@ if [ ! -z "$status_present" ]; then
 elif [ -z "$hid_present" ]; then
 	hid="0"
 	gatewayaddress="0"
-	queryvarlist="clientip gatewayname redir username emailaddr"
+	queryvarlist="clientip gatewayname redir username emailaddr dre"
 else
-	queryvarlist="clientip gatewayname hid gatewayaddress redir username emailaddr"
+	queryvarlist="clientip gatewayname hid gatewayaddress redir username emailaddr dre"
 fi
 
 for var in $queryvarlist; do
@@ -193,6 +193,9 @@ username=$(printf "${username//%/\\x}")
 htmlentityencode "$username"
 usernamehtml=$entityencoded
 emailaddr=$(printf "${emailaddr//%/\\x}")
+dre=$(printf "${dre//%/\\x}")
+htmlentityencode "$dre"
+dre=$entityencoded
 
 #requested might have trailing comma space separated, user defined parameters - so remove them as well as decoding
 requested=$(printf "${redir//%/\\x}" | awk -F ', ' '{print $1}')
@@ -229,143 +232,139 @@ header="<!DOCTYPE html>
 	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
 	<link rel=\"shortcut icon\" href=\"/images/splash.jpg\" type=\"image/x-icon\">
 	<title>Formulario de Presenca</title>
-    <link rel=\"stylesheet\" href=\"https://use.fontawesome.com/releases/v5.4.1/css/all.css\" integrity=\"sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz\" crossorigin=\"anonymous\">
-    <link href=\"https://fonts.googleapis.com/css?family=Roboto:300,400,500,700\" rel=\"stylesheet\">
-    <style>
-      html, body {
-      min-height: 100%;
-      }
-      body, div, form, input, select, p { 
-      padding: 0;
-      margin: 0;
-      outline: none;
-      font-family: Roboto, Arial, sans-serif;
-      font-size: 16px;
-      color: #eee;
-      }
-      body {
-      background: url(\"/ufrj.jpg\") no-repeat center;
-
-      background-size: cover;
-      }
-      h1, h2 {
-      text-transform: uppercase;
-      font-weight: 400;
-      }
-      h2 {
-      margin: 0 0 0 8px;
-      }
-      .main-block {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      padding: 25px;
-      background: rgba(0, 0, 0, 0.5); 
-      }
-      .left-part, form {
-      padding: 25px;
-      }
-      .left-part {
-      text-align: center;
-      }
-      .fa-graduation-cap {
-      font-size: 72px;
-      }
-      form {
-      background: rgba(0, 0, 0, 0.7); 
-      }
-      .title {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      }
-      .info {
-      display: flex;
-      flex-direction: column;
-      }
-      input, select {
-      padding: 5px;
-      margin-bottom: 30px;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid #eee;
-      }
-      input::placeholder {
-      color: #eee;
-      }
-      option:focus {
-      border: none;
-      }
-      option {
-      background: black; 
-      border: none;
-      }
-      .checkbox input {
-      margin: 0 10px 0 0;
-      vertical-align: middle;
-      }
-      .checkbox a {
-      color: #26a9e0;
-      }
-      .checkbox a:hover {
-      color: #85d6de;
-      }
-      .btn-item, button {
-      padding: 10px 5px;
-      margin-top: 20px;
-      border-radius: 5px; 
-      border: none;
-      background: #26a9e0; 
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 400;
-      color: #fff;
-      }
-      .btn-item {
-      display: inline-block;
-      margin: 20px 5px 0;
-      }
-      button {
-      width: 100%;
-      }
-      button:hover, .btn-item:hover {
-      background: #85d6de;
-      }
-      @media (min-width: 568px) {
-      html, body {
-      height: 100%;
-      }
-      .main-block {
-      flex-direction: row;
-      height: calc(100% - 50px);
-      }
-      .left-part, form {
-      flex: 1;
-      height: auto;
-      }
-      }
-    </style>
+	<link href=\"https://fonts.googleapis.com/css?family=Roboto:300,400,500,700\" rel=\"stylesheet\">
+	<link rel=\"stylesheet\" href=\"https://use.fontawesome.com/releases/v.5.4.1/css/all.css\" crossorigin=\"anonymous\">
+	<style>
+		html, body {
+			min-height: 100%;
+		}
+		body, div, form, input, select, p {
+			padding: 0;
+			margin: 0;
+			outline: none;
+			font-family: Roboto, Arial, sans-serif;
+			font-size: 16px;
+			color: #eee;
+		}
+		body {
+			background: url(\"/images/ufrj.jpg\") no-repeat center;
+			background-size: cover;
+		}
+		h1, h2 {
+			text-transform: uppercase;
+			font-weight: 400;
+		}
+		h2 {
+			margin: 0 0 0 8px;
+		}
+		.main-block {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			padding: 25px;
+			background: rgba(0,0,0,0.5);
+		}
+		.left-part, form {
+			padding: 25px;
+		}
+		.left-part {
+			text-align: center;
+		}
+		.fa-graduation-cap {
+			font-size: 72px;
+		}
+		form {
+			background: rgba(0,0,0,0.7);
+		}
+		.title {
+			display: flex;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+		.info {
+			display: flex;
+			flex-direction: column;
+		}
+		input, select {
+			padding: 5px;
+			margin-bottom: 30px;
+			background: transparent;
+			border: none;
+			border-bottom: 1px solid #eee;
+		}
+		input::placeholder {
+			color: #eee;
+		}
+		option:focus {
+			border: none;
+		}
+		option {
+			background: black;
+			border: none;
+		}
+		.checkbox input {
+			margin: 0 10px 0 0;
+			vertical-align: middle;
+		}
+		.checkbox a {
+			color: #26a9e0;
+		}
+		.checkbox a:hover {
+			color: #85d6de;
+		}
+		.btn-item, button {
+			padding: 10px 5px;
+			margin-top: 20px;
+			border-radius: 5px;
+			border: none;
+			background: #26a9e0;
+			text-decoration: none;
+			font-size:15px;
+			font-weight: 400;
+			color: #fff;
+		}
+		.btn-item {
+			display: inline-block;
+			margin: 20px 5px 0;
+		}
+		button {
+			width: 100%;
+		}
+		button:hover, .btn-item:hover {
+			background: #85d6de;
+		}
+		@media (min-width: 800px) {
+			html, body {
+				height: 100%;
+			}
+		}
+		.main-block {
+			flex-direction: row;
+			flex-wrap: wrap;
+			height: calc(100% - 50px);
+		}
+		.left-part, form {
+			flex: 1;
+			height: auto;
+		}
+		}	
+	</style>
 	</head>
 	<body>
-	<div class=\"offset\">
-	<med-blue>$gatewaynamehtml.</med-blue>
-	<div class=\"insert\" style=\"max-width:100%;\">
-    <div class=\"main-block\">
-      <div class=\"left-part\">
-        <i class=\"fas fa-graduation-cap\"></i>
-        <h1>Sistema de presença virtual UFRJ</h1>
-        <p>Insira seus dados ao lado. Com isso, você estará conectado à Internet e garantirá sua presença na aula!</p>
-      </div>
-	<hr>
+	<div class=\"main-block\">
+	<div class=\"left-part\">
+		<i class=\"fas fa-graduation-cap\"></i>
+		<h1>Sistema de Presenca Virtual UFRJ</h1>
+		<p>Insira seus dados ao lado. Com isso, voce estara conectado a Internet e garantira sua presenca na aula!</p>
+	</div><br>
 "
 
 # Define a common footer for every page served
 version="$(ndsctl status | grep Version)"
 year="$(date | awk -F ' ' '{print $(6)}')"
 footer="
-	</div>
 	</div>
 	</body>
 	</html>
@@ -374,22 +373,22 @@ footer="
 # Define a login form
 login_form="
 	<form action=\"/nodogsplash_preauth/\" method=\"get\">
-    <div class=\"title\">
-          <i class=\"fas fa-pencil-alt\"></i> 
-          <h2>cadastre-se</h2>
-        </div>
-    <div class=\"info\">
-	    <input type=\"hidden\" name=\"clientip\" value=\"$clientip\">
-        <input type=\"hidden\" name=\"gatewayname\" value=\"$gatewaynamehtml\">
-        <input type=\"hidden\" name=\"hid\" value=\"$hid\">
-        <input type=\"hidden\" name=\"gatewayaddress\" value=\"$gatewayaddress\">
-        <input type=\"hidden\" name=\"redir\" value=\"$requested\">
-        <input class=\"fname\" type=\"text\" name=\"username\" value=\"$usernamehtml\" autocomplete=\"on\" placeholder=\"Nome Completo\" required>
-        <input type=\"email\" name=\"emailaddr\" value=\"$emailaddr\" autocomplete=\"on\" placeholder=\"Email\" required>
-        <input type=\"text\" name=\"name\" id=\"dre\" minlength=\"9\" maxlength=\"9\" placeholder=\"DRE\" required pattern=\"[0-9]{9}\">
-    </div>
-        <button type=\"submit\" value=\"Conectar\" >
-	</form><hr>
+	<div class=\"title\">
+		<i class=\"fas fa-pencil-alt\"></i>
+		<h2>Cadastre-se</h2>
+	</div>
+	<input type=\"hidden\" name=\"clientip\" value=\"$clientip\">
+	<input type=\"hidden\" name=\"gatewayname\" value=\"$gatewaynamehtml\">
+	<input type=\"hidden\" name=\"hid\" value=\"$hid\">
+	<input type=\"hidden\" name=\"gatewayaddress\" value=\"$gatewayaddress\">
+	<input type=\"hidden\" name=\"redir\" value=\"$requested\">
+	<div class=\"info\">
+		<input type=\"text\" name=\"username\" value=\"$usernamehtml\" autocomplete=\"on\" placeholder=\"Nome\" required><br>
+		<input type=\"email\" name=\"emailaddr\" value=\"$emailaddr\" autocomplete=\"on\" placeholder=\"E-mail\" required><br>
+		<input type=\"text\" name=\"dre\" value=\"$dre\" autocomplete=\"on\" placeholder=\"DRE\" minlength=\"9\" maxlength=\"9\" pattern=\"[0-9]{9}\" required><br>
+	</div>
+		<button type=\"submit\" value=\"Continue\" >Conectar</button>
+	</form><br>
 "
 
 # Output the page common header
@@ -398,9 +397,11 @@ echo -e "$header"
 # Check if the client is already logged in and has tapped "back" on their browser
 # Make this a friendly message explaining they are good to go
 if [ "$status" = "authenticated" ]; then
-	echo "<p><big-red>You are already logged in and have access to the Internet.</big-red></p>"
+	echo "<div class=\"left-part\">"
+	echo "<p><big-red>Voce ja esta logado no sistema!.</big-red></p>"
 	echo "<hr>"
-	echo "<p><italic-black>You can use your Browser, Email and other network Apps as you normally would.</italic-black></p>"
+	echo "<p><italic-black>Voce pode usar a internet normalmente..</italic-black></p>"
+	echo "</div>"
 	echo -e "$footer"
 	exit 0
 fi
@@ -415,9 +416,11 @@ fi
 # Note also $clientip, $gatewayname and $requested (redir) must always be preserved
 #
 if [ -z "$username" ] || [ -z "$emailaddr" ]; then
-	echo "<big-red>Bem vindo!</big-red><br>
-		<med-blue>Voce esta conectado ao $client_zone</med-blue><br>
-		<italic-black>Para acessar a internet, voce deve entrar com seu nome, email e DRE.</italic-black><hr>"
+	#echo "	<div class=\"left-part\">
+	#	<big-red>Seja bem vindo!</big-red><br>
+	#	<med-blue>Este eh o sistema automatico de presenca.</med-blue><br>
+	#	<italic-black>Voce eh novo por aqui! Para confirmar sua presenca na aula, digite abaixo o seu nome e email.</italic-black><hr>
+	#	</div>"
 	echo -e "$login_form"
 else
 	# If we got here, we have both the username and emailaddr fields as completed on the login page on the client,
@@ -432,7 +435,7 @@ else
 	clientinfo=$(ndsctl json $clientip)
 
 	if [ -z "$clientinfo" ]; then
-		echo "<big-red>Desculpa!!</big-red><italic-black> O portal esta ocupado, tente novamente mais tarde.</italic-black><hr>"
+		echo "<big-red>Sorry!</big-red><italic-black> The portal is busy, please try again.</italic-black><hr>"
 		echo -e "$login_form"
 		echo -e "$footer"
 		exit 0
@@ -453,21 +456,31 @@ else
 	# Be aware that many devices will close the login browser as soon as
 	# the client user continues, so now is the time to deliver your message.
 
-	echo "<big-red>Obrigado!</big-red>"
-	echo "<br><b>Bem-vindo, $usernamehtml</b>"
+	#echo "<form action=\"/\">"
+	echo "<form action=\"/nodogsplash_auth/\" method=\"get\">"
+	echo "<h2>Conectado!</h2>"
+	echo "<br>Seja bem vindo, <b>$usernamehtml</b>! Seu email eh <b>$emailaddr</b>.<br> Seu DRE eh <b>$dre</b>.<br> Seu mac addres eh <b>$mac</b>.<br>"
 
 	# Add your message here:
 	# You could retrieve text or images from a remote server using wget or curl
 	# as this router has Internet access whilst the client device does not (yet).
-	echo "<br><italic-black> Agora voce esta conectado, e sua presença foi computada!</italic-black>"
+	echo "<br><italic-black> A sua presenca foi <b>confirmada com sucesso</b>.<br> Obrigado!</italic-black>"
 
 	echo "<form action=\"/nodogsplash_auth/\" method=\"get\">"
 	echo "<input type=\"hidden\" name=\"tok\" value=\"$tok\">"
 	echo "<input type=\"hidden\" name=\"redir\" value=\"$requested\"><br>"
-	echo "<input type=\"submit\" value=\"Continue\" >"
+	echo "<button type=\"submit\" value=\"Continue\" >Continuar</button>"
 	echo "</form><hr>"
-    
-    echo "Data: $now; Nome: $usernamehtml; Email: $emailaddr; Mac: $mac; token: $token\n" >> presenca.txt
+
+	echo "
+		{
+			\"Nome\": \"$usernamehtml\",
+			\"Email\": \"$emailaddr\",
+			\"DRE\": \"$dre\",
+			\"Mac\": \"$mac\",
+			\"Datetime\": \"$(date)\"
+		},
+	" >> /home/pi/presenca.json
 
 	# In this example we have decided to log all clients who are granted access
 	write_log
@@ -478,3 +491,4 @@ echo -e "$footer"
 # The output of this script could of course be much more complex and
 # could easily be used to conduct a dialogue with the client user.
 #
+
