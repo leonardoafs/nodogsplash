@@ -188,3 +188,9 @@ A partir do momento que está instalado, o Captive Portal pode ser configurado a
 Porém, devemos manter as variáveis `$token` e `$mac`, só alterado o código HTML/CSS.
 Para adicionar imagens ao nosso captive portal, você deve inseri-las em `/etc/nodogsplash/htdocs/images/` e, ao chama-la no shell script, você deve se referir como `src=\"/images/FOTO.jpg\"`.
 Na pasta `/teste/` você encontra um arquivo `login.sh` customizado que poderá ser substituido pelo original presente em `/usr/lib/nodogsplash`, enquanto `ufrj.jpg` deverá ser colocado em `/etc/nodogsplash/htdocs/images/`
+
+## 4. Configurando o sistema de presença
+
+A partir de agora, faremos a configuração para que a presença seja dada ao aluno.
+Ao conectar-se pela primeira vez, o Captive Portal aparece, e o aluno se cadastra. Os dados do aluno ficam registrados em um arquivo `presenca.json`, e o endereço MAC de cada aluno vai para o arquivo `lista_macs.txt`. Com isso, a cada reboot, esses enderedeços MAC são configurados como `trusted`, ou seja, não precisam de outra autenticação na próxima vez. Quem faz isso é o script `adicionar_macs.sh`, que deverá estar em `crontab` setado com `@reboot`.
+A cada 5min, deverá ser executado o script `entrada_e_saida.sh`, que basicamente pega os logs de conexões na rede WiFi e alimenta o arquivo `entrada_e_saida.json`, com tags que definem se foi entrada ou saída, e o horário também.
